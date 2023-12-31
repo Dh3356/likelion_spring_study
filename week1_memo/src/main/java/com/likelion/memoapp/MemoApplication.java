@@ -1,4 +1,4 @@
-package com.likelion.memo;
+package com.likelion.memoapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

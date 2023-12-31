@@ -1,4 +1,4 @@
-package com.likelion.memo;
+package com.likelion.memoapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
