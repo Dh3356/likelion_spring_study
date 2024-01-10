@@ -24,8 +24,11 @@ public class User {
     private UUID id;
 
     @Setter
-    @Column(name = "name", nullable = false, length = 30)
-    private String name;
+    @Column(name = "email", nullable = false, length = 40)
+    private String email;
+
+    @Column(name = "password", nullable = false, length = 100)
+    private String password;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore//json으로 변환할 때 memos를 무시한다.
@@ -38,8 +41,9 @@ public class User {
     @Column(name = "updatedAt", nullable = false)
     private Date updatedAt;
 
-    public User(String name) {
-        this.name = name;
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
