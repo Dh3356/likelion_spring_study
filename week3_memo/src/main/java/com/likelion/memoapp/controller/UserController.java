@@ -1,6 +1,8 @@
-package com.likelion.memoapp.user;
+package com.likelion.memoapp.controller;
 
-import com.likelion.memoapp.user.dto.RequestDTO;
+import com.likelion.memoapp.model.User;
+import com.likelion.memoapp.model.dto.UserRequestDTO;
+import com.likelion.memoapp.service.UserService;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +36,8 @@ public class UserController {
     }
 
     @PostMapping
-    public void addUser(@RequestBody RequestDTO requestDTO) throws Exception {
-        this.userService.addUser(requestDTO);
+    public void addUser(@RequestBody UserRequestDTO userRequestDTO) throws Exception {
+        this.userService.addUser(userRequestDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -44,7 +46,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public void updateUserById(@PathVariable("id") String id, @RequestBody RequestDTO requestDTO) {
-        this.userService.updateUserById(UUID.fromString(id), requestDTO);
+    public void updateUserById(@PathVariable("id") String id, @RequestBody UserRequestDTO userRequestDTO) {
+        this.userService.updateUserById(UUID.fromString(id), userRequestDTO);
     }
 }

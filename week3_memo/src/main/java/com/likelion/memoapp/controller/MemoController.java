@@ -1,8 +1,10 @@
-package com.likelion.memoapp.memo;
+package com.likelion.memoapp.controller;
 
-import com.likelion.memoapp.memo.dto.MemoCreateRequestDTO;
-import com.likelion.memoapp.memo.dto.MemoUpdateRequestDTO;
-import com.likelion.memoapp.memo.dto.RequestDTO;
+import com.likelion.memoapp.model.Memo;
+import com.likelion.memoapp.model.dto.memo.MemoCreateRequestDTO;
+import com.likelion.memoapp.model.dto.memo.MemoRequestDTO;
+import com.likelion.memoapp.model.dto.memo.MemoUpdateRequestDTO;
+import com.likelion.memoapp.service.MemoService;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,8 @@ public class MemoController {
     }
 
     @GetMapping("/{id}")
-    public Memo getMemoById(@PathVariable String id, @RequestBody RequestDTO requestDTO) {
-        return this.memoService.getMemoById(UUID.fromString(id), requestDTO);
+    public Memo getMemoById(@PathVariable String id, @RequestBody MemoRequestDTO memoRequestDTO) {
+        return this.memoService.getMemoById(UUID.fromString(id), memoRequestDTO);
     }
 
     @PostMapping
@@ -41,8 +43,8 @@ public class MemoController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteMemoById(@PathVariable("id") String id, @RequestBody RequestDTO requestDTO) {
-        this.memoService.deleteMemoById(UUID.fromString(id), requestDTO);
+    public void deleteMemoById(@PathVariable("id") String id, @RequestBody MemoRequestDTO memoRequestDTO) {
+        this.memoService.deleteMemoById(UUID.fromString(id), memoRequestDTO);
     }
 
     @PatchMapping("/{id}")

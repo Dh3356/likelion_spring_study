@@ -1,5 +1,6 @@
-package com.likelion.memoapp.memo;
+package com.likelion.memoapp.repository;
 
+import com.likelion.memoapp.model.Memo;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

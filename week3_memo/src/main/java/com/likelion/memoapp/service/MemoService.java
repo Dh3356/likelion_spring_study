@@ -1,10 +1,12 @@
-package com.likelion.memoapp.memo;
+package com.likelion.memoapp.service;
 
-import com.likelion.memoapp.memo.dto.MemoCreateRequestDTO;
-import com.likelion.memoapp.memo.dto.MemoUpdateRequestDTO;
-import com.likelion.memoapp.memo.dto.RequestDTO;
-import com.likelion.memoapp.user.User;
-import com.likelion.memoapp.user.UserRepository;
+import com.likelion.memoapp.model.Memo;
+import com.likelion.memoapp.model.User;
+import com.likelion.memoapp.model.dto.memo.MemoCreateRequestDTO;
+import com.likelion.memoapp.model.dto.memo.MemoRequestDTO;
+import com.likelion.memoapp.model.dto.memo.MemoUpdateRequestDTO;
+import com.likelion.memoapp.repository.MemoRepository;
+import com.likelion.memoapp.repository.UserRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -49,8 +51,8 @@ public class MemoService {
         this.memoRepository.save(memo);
     }
 
-    public void deleteMemoById(UUID id, RequestDTO requestDTO) {
-        this.validateUserMemo(requestDTO.getUserId(), id);
+    public void deleteMemoById(UUID id, MemoRequestDTO memoRequestDTO) {
+        this.validateUserMemo(memoRequestDTO.getUserId(), id);
         this.memoRepository.deleteById(id);
     }
 
@@ -63,8 +65,8 @@ public class MemoService {
         this.memoRepository.save(memo);
     }
 
-    public Memo getMemoById(UUID id, RequestDTO requestDTO) {
-        this.validateUserMemo(requestDTO.getUserId(), id);
+    public Memo getMemoById(UUID id, MemoRequestDTO memoRequestDTO) {
+        this.validateUserMemo(memoRequestDTO.getUserId(), id);
         return this.memoRepository.findById(id).orElseThrow();
     }
 

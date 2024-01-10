@@ -1,7 +1,9 @@
-package com.likelion.memoapp.user;
+package com.likelion.memoapp.service;
 
-import com.likelion.memoapp.memo.MemoRepository;
-import com.likelion.memoapp.user.dto.RequestDTO;
+import com.likelion.memoapp.model.User;
+import com.likelion.memoapp.model.dto.UserRequestDTO;
+import com.likelion.memoapp.repository.MemoRepository;
+import com.likelion.memoapp.repository.UserRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -20,8 +22,8 @@ public class UserService {
         this.memoRepository = memoRepository;
     }
 
-    public void addUser(RequestDTO requestDTO) {
-        User user = new User(requestDTO.getName());
+    public void addUser(UserRequestDTO userRequestDTO) {
+        User user = new User(userRequestDTO.getName());
         this.userRepository.save(user);
         this.userRepository.flush();
     }
@@ -34,9 +36,9 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
-    public void updateUserById(UUID id, RequestDTO requestDTO) {
+    public void updateUserById(UUID id, UserRequestDTO userRequestDTO) {
         User userToUpdate = this.userRepository.findById(id).orElseThrow();
-        userToUpdate.setName(requestDTO.getName());
+        userToUpdate.setName(userRequestDTO.getName());
         userToUpdate.setUpdatedAt(new Date());
         this.userRepository.save(userToUpdate);
     }

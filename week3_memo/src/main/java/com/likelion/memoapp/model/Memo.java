@@ -1,7 +1,6 @@
-package com.likelion.memoapp.memo;
+package com.likelion.memoapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.likelion.memoapp.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
