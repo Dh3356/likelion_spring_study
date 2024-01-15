@@ -1,16 +1,19 @@
 package com.likelion.memoapp.service;
 
+import com.likelion.memoapp.dto.memo.MemoCreateRequestDto;
+import com.likelion.memoapp.dto.memo.MemoUpdateRequestDto;
+import com.likelion.memoapp.dto.response.ResponseDto;
 import com.likelion.memoapp.model.Memo;
 import com.likelion.memoapp.model.User;
-import com.likelion.memoapp.model.dto.memo.MemoCreateRequestDTO;
-import com.likelion.memoapp.model.dto.memo.MemoRequestDTO;
-import com.likelion.memoapp.model.dto.memo.MemoUpdateRequestDTO;
 import com.likelion.memoapp.repository.MemoRepository;
 import com.likelion.memoapp.repository.UserRepository;
+import com.likelion.memoapp.util.SecurityUtil;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,7 +27,7 @@ public class MemoService {
         this.userRepository = userRepository;
     }
 
-    private void validateUserMemo(UUID userId, UUID memoId) {
+    private void validateUserMemo(String userId, UUID memoId) {
         if (!this.isValidUser(userId)) {
             throw new RuntimeException("User not found");
         }
@@ -37,7 +40,7 @@ public class MemoService {
         }
     }
 
-    private boolean isValidUser(UUID userId) {
+    private boolean isValidUser(String userId) {
         return this.userRepository.existsById(userId);
     }
 
@@ -45,32 +48,54 @@ public class MemoService {
         return this.memoRepository.existsById(memoId);
     }
 
-    public void addMemo(MemoCreateRequestDTO memoCreateRequestDTO) {
-        User user = this.userRepository.findById(memoCreateRequestDTO.getUserId()).orElseThrow();
+    public ResponseEntity<ResponseDto<Void>> addMemo(MemoCreateRequestDto memoCreateRequestDTO) {
+        User user = this.userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow();
         Memo memo = new Memo(memoCreateRequestDTO.getTitle(), memoCreateRequestDTO.getContent(), user);
         this.memoRepository.save(memo);
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.CREATED,
+                "Success"
+        ), HttpStatus.CREATED);
     }
 
-    public void deleteMemoById(UUID id, MemoRequestDTO memoRequestDTO) {
-        this.validateUserMemo(memoRequestDTO.getUserId(), id);
-        this.memoRepository.deleteById(id);
+    public ResponseEntity<ResponseDto<Void>> deleteMemoById(UUID memoId) {
+        this.validateUserMemo(SecurityUtil.getCurrentUserId(), memoId);
+        this.memoRepository.deleteById(memoId);
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK,
+                "Success"
+        ), HttpStatus.OK);
     }
 
-    public void updateMemoById(UUID id, MemoUpdateRequestDTO memoUpdateRequestDTO) {
-        this.validateUserMemo(memoUpdateRequestDTO.getUserId(), id);
+    public ResponseEntity<ResponseDto<Void>> updateMemoById(UUID id, MemoUpdateRequestDto memoUpdateRequestDTO) {
+        this.validateUserMemo(SecurityUtil.getCurrentUserId(), id);
         Memo memo = this.memoRepository.findById(id).orElseThrow();
         memo.setTitle(memoUpdateRequestDTO.getTitle());
         memo.setContent(memoUpdateRequestDTO.getContent());
         memo.setUpdatedAt(new Date());
         this.memoRepository.save(memo);
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK,
+                "Success"
+        ), HttpStatus.OK);
     }
 
-    public Memo getMemoById(UUID id, MemoRequestDTO memoRequestDTO) {
-        this.validateUserMemo(memoRequestDTO.getUserId(), id);
-        return this.memoRepository.findById(id).orElseThrow();
+    public ResponseEntity<ResponseDto<Memo>> getMemoById(UUID id) {
+        this.validateUserMemo(SecurityUtil.getCurrentUserId(), id);
+        Memo memo = this.memoRepository.findById(id).orElseThrow();
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK,
+                "Success",
+                memo
+        ), HttpStatus.OK);
     }
 
-    public List<Memo> getAllMemos() {
-        return this.memoRepository.findAll().stream().toList();
+    public ResponseEntity<ResponseDto<List<Memo>>> getAllMemos() {
+        List<Memo> memos = this.memoRepository.findAll();
+        return new ResponseEntity<>(ResponseDto.res(
+                HttpStatus.OK,
+                "Success",
+                memos
+        ), HttpStatus.OK);
     }
 }
