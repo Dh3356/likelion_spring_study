@@ -2,49 +2,107 @@ package com.likelion.memoapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Persistable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
-public class User {
+@AllArgsConstructor
+public class User implements UserDetails, Persistable<String> {
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private List<Role> roles = new ArrayList<>();
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "uuid2")
-    private UUID id;
-
-    @Setter
-    @Column(name = "email", nullable = false, length = 40)
-    private String email;
-
+    @Column(name = "id", updatable = false, unique = true, nullable = false)
+    private String id;
     @Column(name = "password", nullable = false, length = 100)
     private String password;
-
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore//json으로 변환할 때 memos를 무시한다.
     private List<Memo> memos;
-
     @Column(name = "createdAt", nullable = false, updatable = false)
     private Date createdAt;
-
     @Setter
     @Column(name = "updatedAt", nullable = false)
     private Date updatedAt;
 
-    public User(String email, String password) {
-        this.email = email;
+    public User(String id, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
         this.password = password;
+        this.roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(Role::valueOf)
+                .collect(Collectors.toList());
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(Role::toString)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getUsername() {
+        return id;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean isNew() {
+        return true;
+    }
 }
+
+
