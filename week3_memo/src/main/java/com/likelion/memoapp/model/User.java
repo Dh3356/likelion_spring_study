@@ -19,7 +19,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Persistable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails, Persistable<String> {
+public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -49,6 +48,11 @@ public class User implements UserDetails, Persistable<String> {
     @Setter
     @Column(name = "updatedAt", nullable = false)
     private Date updatedAt;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Status status = Status.ACTIVE;
 
     public User(String id, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
@@ -96,12 +100,7 @@ public class User implements UserDetails, Persistable<String> {
 
     @Override
     public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public boolean isNew() {
-        return true;
+        return this.status == Status.ACTIVE;
     }
 }
 

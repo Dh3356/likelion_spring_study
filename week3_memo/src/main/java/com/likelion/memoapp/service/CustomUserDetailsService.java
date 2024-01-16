@@ -25,10 +25,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     // 해당하는 User 의 데이터가 존재한다면 UserDetails 객체로 만들어서 리턴
     private UserDetails createUserDetails(User user) {
+        validateUser(user);
         return User.builder()
                 .id(user.getId())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .roles(user.getRoles())
                 .build();
+    }
+
+    private void validateUser(User user) {
+        if (!user.isEnabled()) {
+            throw new UsernameNotFoundException("사용할 수 없는 계정입니다.");
+        }
     }
 }
