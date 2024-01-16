@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/signup", "/auth/login").permitAll()
+                        .requestMatchers("/auth/test").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement((sessionManagement) ->
