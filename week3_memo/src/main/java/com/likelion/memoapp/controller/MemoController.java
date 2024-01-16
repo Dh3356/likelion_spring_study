@@ -5,6 +5,7 @@ import com.likelion.memoapp.dto.memo.MemoUpdateRequestDto;
 import com.likelion.memoapp.dto.response.ResponseDto;
 import com.likelion.memoapp.model.Memo;
 import com.likelion.memoapp.service.MemoService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class MemoController {
 
     @PostMapping
     public ResponseEntity<ResponseDto<Void>> addMemo(
-            @RequestBody MemoCreateRequestDto memoCreateRequestDTO)
+            @RequestBody @Valid MemoCreateRequestDto memoCreateRequestDTO)
             throws Exception {
         return this.memoService.addMemo(memoCreateRequestDTO);
     }
@@ -53,7 +54,7 @@ public class MemoController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<ResponseDto<Void>> updateMemoById(@PathVariable("id") String id,
-                                                            @RequestBody MemoUpdateRequestDto memoUpdateRequestDTO) {
+                                                            @RequestBody @Valid MemoUpdateRequestDto memoUpdateRequestDTO) {
         return this.memoService.updateMemoById(UUID.fromString(id), memoUpdateRequestDTO);
     }
 
