@@ -57,7 +57,7 @@ public class JwtTokenProvider {
         Date accessTokenExpiresIn = new Date(now + expiration);
 
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(authentication.getName())//userId 이다
                 .claim("auth", authorities)
                 .setIssuedAt(new Date(now))
                 .setExpiration(accessTokenExpiresIn)
@@ -72,7 +72,6 @@ public class JwtTokenProvider {
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String accessToken) {
-        this.validateToken(accessToken);
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
@@ -89,6 +88,7 @@ public class JwtTokenProvider {
                             .collect(Collectors.toList());
 
             // UserDetails 객체를 만들어서 Authentication 리턴
+            // 일반적으로 보안 토큰에는 사용자의 비밀번호를 포함시키지 않고, 사용자를 식별하는 정보와 권한 정보만을 포함
             UserDetails principal = new User(claims.getSubject(), "", authorities);
             return new UsernamePasswordAuthenticationToken(principal, "", authorities);
         } else {
