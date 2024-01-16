@@ -63,6 +63,7 @@ public class User implements UserDetails {
                 .collect(Collectors.toList());
         this.createdAt = new Date();
         this.updatedAt = new Date();
+        this.status = Status.ACTIVE;
     }
 
     @Override
