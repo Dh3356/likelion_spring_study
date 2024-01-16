@@ -33,11 +33,6 @@ public class AuthController {
         return this.authService.login(authLoginRequestDTO, response);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<ResponseDto<Void>> logout(HttpServletResponse response) {
-        return this.authService.logout(response);
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<ResponseDto<Void>> signup(@RequestBody @Valid AuthSignupRequestDto authSignupRequestDTO) {
         return this.authService.signup(authSignupRequestDTO);
