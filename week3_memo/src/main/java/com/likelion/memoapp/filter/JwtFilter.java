@@ -1,5 +1,6 @@
 package com.likelion.memoapp.filter;
 
+import com.likelion.memoapp.util.EncodeUtil;
 import com.likelion.memoapp.util.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("accessToken".equals(cookie.getName())) {
-                    return cookie.getValue();
+                    return EncodeUtil.decodeJwtBearerToken(cookie.getValue());
                 }
             }
         }

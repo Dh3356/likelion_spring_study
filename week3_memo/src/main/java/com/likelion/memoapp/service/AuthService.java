@@ -7,6 +7,7 @@ import com.likelion.memoapp.dto.response.ResponseDto;
 import com.likelion.memoapp.model.Role;
 import com.likelion.memoapp.model.User;
 import com.likelion.memoapp.repository.UserRepository;
+import com.likelion.memoapp.util.EncodeUtil;
 import com.likelion.memoapp.util.JwtTokenProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,8 +43,11 @@ public class AuthService {
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
+        String jwtToken = jwtTokenProvider.generateToken(authentication).getAccessToken();
         // 3. 인증 정보를 기반으로 JWT 토큰 생성, Cookie에 담아서 전달
-        Cookie cookie = new Cookie("accessToken", jwtTokenProvider.generateToken(authentication).getAccessToken());
+        Cookie cookie = new Cookie("accessToken",
+                EncodeUtil.encodeJwtBearerToken(jwtToken));
+
         cookie.setMaxAge(60 * 60 * 24);//하루
         cookie.setHttpOnly(true);//자바스크립트로 접근 불가
         cookie.setPath("/");//모든 경로에서 접근 가능
