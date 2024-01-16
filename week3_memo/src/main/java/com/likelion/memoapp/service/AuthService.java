@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<ResponseDto<Void>> login(AuthLoginRequestDto authLoginRequestDTO,
                                                    HttpServletResponse response) {
@@ -64,7 +66,8 @@ public class AuthService {
         if (this.isUserExists(authSignupRequestDTO.getUserId()) != null) {
             return new ResponseEntity<>(ResponseDto.res(HttpStatus.CONFLICT, "USER가 이미 존재합니다."), HttpStatus.CONFLICT);
         } else {
-            User user = new User(authSignupRequestDTO.getUserId(), authSignupRequestDTO.getPassword(),
+            User user = new User(authSignupRequestDTO.getUserId(),
+                    passwordEncoder.encode(authSignupRequestDTO.getPassword()),
                     Collections.singleton(Role.ROLE_USER));
             this.userRepository.save(user);
             return new ResponseEntity<>(ResponseDto.res(HttpStatus.CREATED, "회원가입 되었습니다."), HttpStatus.CREATED);

@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         validateUser(user);
         return User.builder()
                 .id(user.getId())
-                .password(passwordEncoder.encode(user.getPassword()))
+                .password(user.getPassword())
                 .roles(user.getRoles())
                 .build();
     }
